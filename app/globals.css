@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+.PhoneInputInput {
+    outline: none !important;
+    /* Remove default outline */
+    border: none !important;
+    /* Remove any border */
+    padding: 5px;
+    margin-left: 10px;
+
+}

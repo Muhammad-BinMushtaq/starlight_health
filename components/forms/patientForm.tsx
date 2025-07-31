@@ -1,0 +1,105 @@
+"use client"
+
+
+import {useForm } from "react-hook-form"
+import { z } from "zod"
+import { useState } from "react"
+import SubmitButton from "../submitButton"
+import { PatientFormValidation } from "@/lib/validation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import CustomFormField from "../customFormField"
+import { Router } from "next/router"
+import { Form } from "../ui/form"
+
+
+export enum FormFieldName {
+  INPUT = "input",
+  TEXTAREA = "textarea",
+  PHONE_INPUT = "phoneInput",
+  CHECKBOX = "checkbox",
+  DATE_PICKER = "datePicker",
+  SELECT = "select",
+  SKELETON = "skeleton",
+}
+
+
+
+export function PatientForm() {
+
+  const router = Router;
+  const [isLoading, setIsLoading] = useState(false)
+
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+
+    resolver: zodResolver(PatientFormValidation),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  })
+
+  const onSubmit = async ({ name, email, phone }: z.infer<typeof PatientFormValidation>) => {
+    setIsLoading(true);
+
+    try {
+      // const userData = { name, email, phone };
+      // const user = await CreateUser(userData);
+      // if (user){
+      //   Router.push(`/patients/${user.id}/register`);
+      // }
+
+  } catch (error) {
+
+      console.log("Error submitting form:", error);
+    }
+
+  }
+
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <section className="mb-8 space-y-4">
+          <h1 className="text-3xl mb-2">Hello 👋</h1>
+          <p className="text-gray-400">Welcome to Starlight Health</p>
+        </section>
+
+
+        <CustomFormField
+          formFieldType={FormFieldName.INPUT}
+          control={form.control}
+          name="name"
+          label="Full Name"
+          placeholder="Ali Khan"
+          iconSrc="/assets/icons/user.svg"
+          iconAlt="User"
+        />
+
+        <CustomFormField
+          formFieldType={FormFieldName.INPUT}
+          control={form.control}
+          name="email"
+          label="Email"
+          placeholder="ali@gmail.com"
+          iconSrc="/assets/icons/email.svg"
+          iconAlt="Email"
+        />
+
+        <CustomFormField
+          formFieldType={FormFieldName.PHONE_INPUT}
+          control={form.control}
+          name="phone"
+          label="Phone Number"
+          placeholder="300 1234567"
+
+        />
+
+
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+      </form>
+    </Form >
+  )
+}
+
+export default PatientForm
