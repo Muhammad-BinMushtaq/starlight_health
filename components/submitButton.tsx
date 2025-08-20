@@ -2,7 +2,6 @@
 import React from 'react'
 import { Button } from './ui/button';
 import Image from 'next/image';
-import { set } from 'zod';
 
 
 interface LoadingTypes {
@@ -15,7 +14,7 @@ interface LoadingTypes {
 const SubmitButton = ({ isLoading, className, children }: LoadingTypes) => {
     
     return (
-        <Button
+        <Button  
             type='submit'
             disabled={isLoading}
             className={className ?? 'w-full bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800'}

@@ -38,15 +38,15 @@ const Home = () => {
       </section>
 
       {/* Right Side (Image Section) - hidden on small screens */}
-      <div className="hidden lg:block lg:w-1/2 h-full ">
+      {/* <div className="hidden lg:block lg:w-1/2 h-full "> */}
         <Image
           src="/assets/images/onboarding-img.png"
           height={1000}
           width={1000}
           alt="patient onboarding"
-          className="h-full w-full object-cover rounded-l-2xl"
+          className="hidden lg:block h-full w-auto object-cover rounded-l-2xl max-w-[40%]"
         />
-      </div>
+      {/* </div> */}
     </div>
   );
 };

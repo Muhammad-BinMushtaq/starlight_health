@@ -1,15 +1,17 @@
 "use client"
 
 
-import {useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
 import SubmitButton from "../submitButton"
 import { PatientFormValidation } from "@/lib/validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import CustomFormField from "../customFormField"
-import { Router } from "next/router"
 import { Form } from "../ui/form"
+import { useRouter } from "next/navigation"
+import { createUser } from "@/lib/actions/patients.action"
+
 
 
 export enum FormFieldName {
@@ -20,13 +22,15 @@ export enum FormFieldName {
   DATE_PICKER = "datePicker",
   SELECT = "select",
   SKELETON = "skeleton",
+  RADIO_GROUP = "radioGroup",
 }
 
 
 
 export function PatientForm() {
 
-  const router = Router;
+  const router = useRouter()
+
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof PatientFormValidation>>({
@@ -43,16 +47,17 @@ export function PatientForm() {
     setIsLoading(true);
 
     try {
-      // const userData = { name, email, phone };
-      // const user = await CreateUser(userData);
-      // if (user){
-      //   Router.push(`/patients/${user.id}/register`);
-      // }
+      const userData = { name, email, phone };
+      const newUser = await createUser(userData);
+      if (newUser) {
+        router.push(`/patients/${newUser.$id}/register`);
+      }
 
-  } catch (error) {
+    } catch (error) {
 
       console.log("Error submitting form:", error);
     }
+       setIsLoading(false);
 
   }
 
