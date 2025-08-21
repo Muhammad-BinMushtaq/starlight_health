@@ -17,7 +17,7 @@ const SubmitButton = ({ isLoading, className, children }: LoadingTypes) => {
         <Button  
             type='submit'
             disabled={isLoading}
-            className={className ?? 'w-full bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800'}
+            className={className ?? ' w-full bg-[#24AE7C] hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800'}
         >
             {
                 isLoading ? (

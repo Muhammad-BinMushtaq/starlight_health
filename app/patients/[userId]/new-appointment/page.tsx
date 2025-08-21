@@ -1,6 +1,6 @@
 
 import AppointmentForm from '@/components/forms/appointmentForm'
-import { RegisterForm } from '@/components/forms/registerForm'
+
 import { getPatient, getUser } from '@/lib/actions/patients.action'
 import Image from 'next/image'
 

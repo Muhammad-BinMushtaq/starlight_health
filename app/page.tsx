@@ -1,14 +1,24 @@
 
 import PatientForm from "@/components/forms/patientForm";
+import PasskeyModel from "@/components/passkeyModel";
 import Image from "next/image";
 import Link from "next/link";
 
 
 
-const Home = () => {
+const Home = async ({ searchParams }: { searchParams: Promise<{ admin: string }> }) => {
+  // const admin = (await searchParams).admin
+  const { admin } = await searchParams
+  const isAdmin = admin === 'true'
+
+
   return (
     <div className="flex flex-col lg:flex-row h-screen overflow-hidden">
       {/*TODO: verification passkeys */}
+      {
+        isAdmin &&
+        <PasskeyModel />
+      }
 
       {/* Left Side (Form Section) */}
       <section className="flex-1  px-6 py-10 lg:py-16 lg:px-12">
@@ -39,13 +49,13 @@ const Home = () => {
 
       {/* Right Side (Image Section) - hidden on small screens */}
       {/* <div className="hidden lg:block lg:w-1/2 h-full "> */}
-        <Image
-          src="/assets/images/onboarding-img.png"
-          height={1000}
-          width={1000}
-          alt="patient onboarding"
-          className="hidden lg:block h-full w-auto object-cover rounded-l-2xl max-w-[40%]"
-        />
+      <Image
+        src="/assets/images/onboarding-img.png"
+        height={1000}
+        width={1000}
+        alt="patient onboarding"
+        className="hidden lg:block h-full w-auto object-cover rounded-l-2xl max-w-[40%]"
+      />
       {/* </div> */}
     </div>
   );

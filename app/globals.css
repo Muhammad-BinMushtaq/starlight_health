@@ -10,3 +10,24 @@
 
 }
 
+.otp {
+    padding: 30px;
+
+}
+
+.otp:hover {
+    border: 1px solid greenyellow !important;
+    font-size: 23px !important;
+}
+
+.my-card {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-radius: 1rem;
+    background-size: cover;
+    padding: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
