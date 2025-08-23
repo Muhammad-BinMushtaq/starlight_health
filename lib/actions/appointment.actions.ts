@@ -5,6 +5,7 @@ import { APPOINTMENT_COLLECTION_ID, database, DB_ID } from "../appwrite.config";
 import { ID, Query } from "node-appwrite";
 import { parseStringify } from "../utils";
 import { stat } from "fs";
+import { revalidatePath } from "next/cache";
 
 
 export const CreateAppointment = async (appointmentData: CreateAppointmentParams) => {
@@ -62,7 +63,7 @@ export const getRecentAppointments = async () => {
 
         )
         const Appointments = RecentAppointments.documents
-        console.log(RecentAppointments)
+
 
         //  "pending" | "scheduled" | "cancelled";
         const stats = {
@@ -84,10 +85,35 @@ export const getRecentAppointments = async () => {
 
         }
         const appointmentsData = parseStringify(data)
-        console.log(appointmentsData)
+
         return (appointmentsData)
     } catch (error) {
         console.log(error)
     }
 }
 
+export const updateAppointment = async ({ appointment, userId, appointmentId, type }: UpdateAppointmentParams) => {
+    try {
+
+        const updatedAppointment = await database.updateDocument(
+            DB_ID!,
+            APPOINTMENT_COLLECTION_ID!,
+            appointmentId,
+            appointment 
+
+        )
+        console.log("updated Appoinedmet after database call of type ",type, updatedAppointment)
+
+        if (!updatedAppointment) {
+            throw new Error("APpointment not found")
+        }
+        else {
+            revalidatePath('/admin')
+            return parseStringify(updatedAppointment)
+
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}

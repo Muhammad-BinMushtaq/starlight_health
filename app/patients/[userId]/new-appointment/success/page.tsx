@@ -14,7 +14,7 @@ const Success = async ({ params, searchParams }: {
     const { appointmentId } = await searchParams
 
     const appointmentData = await getAppointment(appointmentId)
-    console.log(appointmentData)
+    console.log("thsi is on success page  and is appointmert data ",appointmentData)
 
     const doctorImage = Doctors.find((doc) => doc.name === appointmentData.primaryPhysician)
     const formatedTime = formatDateTime(appointmentData.appointmentDate)

@@ -92,6 +92,7 @@ export const ScheduleAppointmentSchema = z.object({
     reasonforAppointment: z.string().optional(),
     additionalComments: z.string().optional(),
     cancellationReason: z.string().optional(),
+
 });
 
 export const CancelAppointmentSchema = z.object({
@@ -102,7 +103,9 @@ export const CancelAppointmentSchema = z.object({
     cancellationReason: z
         .string()
         .min(2, "Reason must be at least 2 characters")
-        .max(500, "Reason must be at most 500 characters"),
+        .max(500, "Reason must be at most 500 characters")
+        .optional(),
+
 });
 
 export function getAppointmentSchema(type: string) {

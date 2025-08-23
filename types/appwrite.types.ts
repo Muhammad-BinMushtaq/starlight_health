@@ -32,6 +32,6 @@ export interface Appointment extends Models.Document {
   reasonforAppointment: string;
   additionalComments?: string;
   userId: string;
-  cancellationReason: string | null;
+  cancellationReason: string |undefined
 }
 

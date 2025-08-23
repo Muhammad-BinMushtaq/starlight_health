@@ -1,11 +1,15 @@
 
 import StatCard from "@/components/statCard";
+import { columns} from "@/components/table/columns";
+import { DataTable } from "@/components/table/data-table";
 import { getRecentAppointments } from "@/lib/actions/appointment.actions";
 import Image from "next/image";
 import Link from "next/link";
 
 
+
 const Admin = async () => {
+
     const data = await getRecentAppointments()
 
     const appointment = data.Appointments
@@ -69,8 +73,8 @@ const Admin = async () => {
                     />
                 </section>
 
-                <section>
-                    <FormTable />
+                <section className="w-full">
+                    <DataTable columns={columns} data={appointment} />
                 </section>
 
 

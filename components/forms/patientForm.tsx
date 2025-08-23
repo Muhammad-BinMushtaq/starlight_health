@@ -4,13 +4,14 @@
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
-import SubmitButton from "../submitButton"
-import { PatientFormValidation } from "@/lib/validation"
+import { PatientFormValidation, UserFormValidation } from "@/lib/validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import CustomFormField from "../customFormField"
 import { Form } from "../ui/form"
 import { useRouter } from "next/navigation"
 import { createUser } from "@/lib/actions/patients.action"
+import { Button } from "../ui/button"
+import SubmitButton from "../submitButton"
 
 
 
@@ -33,9 +34,9 @@ export function PatientForm() {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<z.infer<typeof PatientFormValidation>>({
+  const form = useForm<z.infer<typeof UserFormValidation>>({
 
-    resolver: zodResolver(PatientFormValidation),
+    resolver: zodResolver(UserFormValidation),
     defaultValues: {
       name: "",
       email: "",
@@ -43,7 +44,8 @@ export function PatientForm() {
     },
   })
 
-  const onSubmit = async ({ name, email, phone }: z.infer<typeof PatientFormValidation>) => {
+  const onSubmit = async ({ name, email, phone }: z.infer<typeof UserFormValidation>) => {
+    console.log("onsubmit is called")
     setIsLoading(true);
 
     try {
@@ -57,7 +59,11 @@ export function PatientForm() {
 
       console.log("Error submitting form:", error);
     }
-       setIsLoading(false);
+
+    finally {
+      setIsLoading(false)
+    }
+
 
   }
 
@@ -100,7 +106,7 @@ export function PatientForm() {
 
         />
 
-
+        {/* <Button type='submit'>Get Started</Button> */}
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form >

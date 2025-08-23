@@ -11,14 +11,17 @@ import { Doctors } from "@/constants"
 import Image from "next/image"
 import { SelectItem } from "@/components/ui/select"
 import { getAppointmentSchema } from "@/lib/validation"
-import { CreateAppointment } from "@/lib/actions/appointment.actions"
+import { CreateAppointment, updateAppointment } from "@/lib/actions/appointment.actions"
 import SubmitButton from "../submitButton"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Appointment } from "@/types/appwrite.types"
 
 
 
 
-export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 'cancel' | 'schedule', userId: string, patientId: string }) {
+export function AppointmentForm({ type, userId, patientId, appointment, setOpen }: { type: 'create' | 'cancel' | 'schedule', userId: string, patientId: string, appointment?: Appointment, setOpen?: Dispatch<SetStateAction<boolean>>; }) {
+
+
 
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
@@ -28,10 +31,11 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
     const form = useForm<z.infer<typeof AppointmentFormValidation>>({
         resolver: zodResolver(AppointmentFormValidation),
         defaultValues: {
-            primaryPhysician: "",
-            reasonforAppointment: "",
-            additionalComments: "",
-            appointmentDate: new Date,
+            primaryPhysician: appointment ? appointment.primaryPhysician : '',
+            reasonforAppointment: appointment?.reasonforAppointment || '',
+            additionalComments: appointment?.additionalComments || '',
+            appointmentDate: appointment ? new Date(appointment.appointmentDate) : new Date(Date.now()),
+            cancellationReason: appointment?.cancellationReason || '',
 
         },
 
@@ -40,15 +44,17 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
 
 
     const onSubmit = async function (values: z.infer<typeof AppointmentFormValidation>) {
-        
+        console.log("these are values after submittinf", values)
         setIsLoading(true)
+
+
 
 
         let status = 'pending';
         switch (type) {
             case 'schedule':
                 status = 'scheduled';
-                break
+                break;
 
 
             case 'cancel':
@@ -78,6 +84,34 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
                 }
 
             }
+
+            else {
+                const appointmentToUpdate = {
+                    userId,
+                    appointmentId: appointment?.$id!,
+                    appointment: {
+                        primaryPhysician: values.primaryPhysician,
+                        reasonforAppointment: values.reasonforAppointment,
+                        appointmentDate: new Date(values.appointmentDate),
+                        cancellationReason: type == 'cancel' ? values.cancellationReason : '',
+                        status: status as Status
+                    },
+                    type
+
+                }
+
+                const updatedpApointment = await updateAppointment(appointmentToUpdate)
+                if (updatedpApointment) {
+                    form.reset()
+                    setOpen && setOpen(false)
+                    // console.log("this is updatd schema we get ", updateAppointment)
+                }
+
+
+            }
+
+
+
         } catch (error) {
             console.log(error)
         }
@@ -86,8 +120,8 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
         }
 
 
-
     }
+    console.log({ type, userId, patientId, appointment })
 
 
     let buttonLabel;
@@ -110,18 +144,26 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
 
         <Form {...form}>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <section className="mb-8 space-y-4">
-                    <h1 className="text-4xl mb-1 font-semibold tracking-tight">Hey there👋 </h1>
-                    <p className="text-gray-400  tracking-tighter">Request a new appointment in 10 seconds</p>
+            <form
+                onSubmit={form.handleSubmit(onSubmit,
+                    (errors) => {
+                        console.error("Validation failed:", errors)
+                    })}
+                className="space-y-5"
+            >
+                {type === 'create' && (
+                    <section className="mb-8 space-y-4">
+                        <h1 className="text-4xl mb-1 font-semibold tracking-tight">Hey there👋 </h1>
+                        <p className="text-gray-400  tracking-tighter">Request a new appointment in 10 seconds</p>
 
-                </section>
+                    </section>
+                )}
 
 
                 <div className="flex flex-col gap-7">
                     {
 
-                        type === 'create' && (
+                        type !== 'cancel' && (
 
                             <>
 
@@ -164,15 +206,17 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
                                         placeholder="ex: Checkup, Consultation, etc."
 
                                     />
-                                    <CustomFormField
-                                        formFieldType={FormFieldName.TEXTAREA}
-                                        control={form.control}
-                                        name="additionalComments"
-                                        label="Additional Comments (if any)"
-                                        placeholder="ex: I have a headache, I need a follow-up, etc."
-                                        iconSrc=""
+                                    {type === 'create' && (
+                                        <CustomFormField
+                                            formFieldType={FormFieldName.TEXTAREA}
+                                            control={form.control}
+                                            name="additionalComments"
+                                            label="Additional Comments (if any)"
+                                            placeholder="ex: I have a headache, I need a follow-up, etc."
+                                            iconSrc=""
 
-                                    />
+                                        />
+                                    )}
                                 </div>
 
 
@@ -194,8 +238,6 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
                             </>
                         )
                     }
-
-
                     {
                         type === 'cancel' && (
 
@@ -207,15 +249,14 @@ export function AppointmentForm({ type, userId, patientId }: { type: 'create' | 
                                 placeholder="ex: I am not feeling well, I have a scheduling conflict, etc."
                             />
                         )
+
                     }
-
-
 
 
                 </div>
 
 
-                <SubmitButton isLoading={isLoading} className={` w-full ${type === 'create' ? 'bg-green-600' : 'bg-red-500'}`} >{buttonLabel}</SubmitButton>
+                <SubmitButton isLoading={isLoading} className={` w-full ${type === 'cancel' ? 'bg-red-500' : 'bg-green-600'}`} >{buttonLabel}</SubmitButton>
             </form>
         </Form >
     )
