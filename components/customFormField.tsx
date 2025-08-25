@@ -41,7 +41,7 @@ interface CustomProps {
 
 
 const RenderFields = ({ field, props }: { field: any, props: CustomProps }) => {
-    const { formFieldType, placeholder, iconSrc, iconAlt, showTimeSelect, dateformat, renderSkeleton } = props
+    const { formFieldType, placeholder, iconSrc, iconAlt, showTimeSelect, dateformat, renderSkeleton, disabled } = props
 
     switch (formFieldType) {
         case FormFieldName.INPUT:
@@ -59,8 +59,10 @@ const RenderFields = ({ field, props }: { field: any, props: CustomProps }) => {
                         )}
 
                     <FormControl>
+
                         <Input placeholder={placeholder}
                             {...field}
+                            disabled={disabled}
 
                             className="border-none outline-none bg-transparent"
                         />
@@ -77,15 +79,20 @@ const RenderFields = ({ field, props }: { field: any, props: CustomProps }) => {
                     <FormControl>
                         <PhoneInput
                             placeholder={placeholder}
+                            {...field}
                             className=" mt-1 w-full ml-6 border-none outline-none bg-transparent focus:outline-none focus:ring-0 text-white"
                             defaultCountry="US"
                             international
                             withCountryCallingCode
                             value={typeof field.value === 'string' ? field.value : ''}
                             onChange={field.onChange}
+                            disabled={disabled}
 
                             countrySelectProps={{
                                 className: "bg-gray-900 text-white border-none outline-none "
+                            }}
+                            inputProps={{
+                                disabled: disabled,   // <-- works here
                             }}
 
                         />
@@ -111,10 +118,10 @@ const RenderFields = ({ field, props }: { field: any, props: CustomProps }) => {
                         <DatePicker selected={field.value}
                             onChange={(date) => { field.onChange(date) }}
                             className="bg-grey-500 outline-none border-none ml-3"
-                            dateFormat={dateformat ?? 'MM/dd/yyyy' }
+                            dateFormat={dateformat ?? 'MM/dd/yyyy'}
                             showTimeSelect={showTimeSelect ?? false}
                             placeholderText="DD/MM/YYYY"
-                            
+
                         />
 
                     </FormControl>
@@ -202,6 +209,7 @@ const CustomFormField = (props: CustomProps) => {
 
         <FormField
             control={control}
+
             name={name}
             render={({ field }) => (
                 <FormItem className="flex-1">

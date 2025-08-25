@@ -44,7 +44,7 @@ export function AppointmentForm({ type, userId, patientId, appointment, setOpen 
 
 
     const onSubmit = async function (values: z.infer<typeof AppointmentFormValidation>) {
-        console.log("these are values after submittinf", values)
+        
         setIsLoading(true)
 
 
@@ -121,7 +121,7 @@ export function AppointmentForm({ type, userId, patientId, appointment, setOpen 
 
 
     }
-    console.log({ type, userId, patientId, appointment })
+    
 
 
     let buttonLabel;

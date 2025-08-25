@@ -8,7 +8,7 @@ import React from 'react'
 const Register = async ({ params }: { params: Promise<{ userId: string }> }) => {
 
   const { userId } = await params
-  const user = await getUser(userId)
+  // const user = await getUser(userId)
 
   return (
     <div className="flex flex-col lg:flex-row h-auto overflow-x-hidden overflow-y-hidden">
@@ -28,7 +28,7 @@ const Register = async ({ params }: { params: Promise<{ userId: string }> }) => 
           />
 
           {/* Patient Form */}
-          <RegisterForm user={user} />
+          <RegisterForm  userId={userId} />
 
           {/* Footer */}
           <div className="mt-10 flex flex-col items-center justify-between gap-4 text-sm text-gray-400 md:flex-row">

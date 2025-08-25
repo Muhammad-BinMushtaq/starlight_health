@@ -5,6 +5,13 @@ import { BUCKET_ID, database, DB_ID, END_POINT, PATIENT_COLLECTION_ID, PROJECT_I
 import { parseStringify } from "../utils"
 
 
+interface UpdateUserParams {
+    userId: string;
+    email?: string;
+    phone?: string;
+    name?: string;
+    password?: string;
+}
 
 
 export const createUser = async (user: CreateUserParams) => {
@@ -30,10 +37,37 @@ export const createUser = async (user: CreateUserParams) => {
             const existingUser = await users.list(
                 [Query.equal("email", [user.email])],
             )
-            return existingUser?.users[0] 
+            return existingUser?.users[0]
         } console.error("An error occurred while creating a new user:", error);
     }
 }
+
+
+
+export const updateUser = async (userData: UpdateUserParams) => {
+    try {
+        // console.log("User update function is called now");
+
+        let updatedUser;
+
+        if (userData.email) {
+            updatedUser = await users.updateEmail(userData.userId, userData.email);
+        }
+        if (userData.phone) {
+            updatedUser = await users.updatePhone(userData.userId, userData.phone);
+        }
+        if (userData.name) {
+            updatedUser = await users.updateName(userData.userId, userData.name);
+        }
+
+
+        return parseStringify(updatedUser);
+
+    } catch (error: any) {
+        console.error("An error occurred while updating user:", error);
+        throw error;
+    }
+};
 
 
 export const getUser = async (userId: string) => {
@@ -122,3 +156,5 @@ export const getPatient = async (userId: string) => {
         return null
     }
 }
+
+

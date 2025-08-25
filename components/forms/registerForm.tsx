@@ -22,7 +22,12 @@ import SubmitButton from "../submitButton"
 
 
 
-export function RegisterForm({ user }: { user: User }) {
+export function RegisterForm({ userId }: { userId: string }) {
+    function getChangedFields(newValues: any, oldValues: any) {
+        return Object.fromEntries(
+            Object.entries(newValues).filter(([key, value]) => value !== oldValues[key])
+        );
+    }
 
     const router = useRouter()
 
@@ -31,7 +36,9 @@ export function RegisterForm({ user }: { user: User }) {
 
     const form = useForm<z.infer<typeof PatientFormValidation>>({
         resolver: zodResolver(PatientFormValidation),
-        defaultValues: PatientFormDefaultValues,
+
+        defaultValues:
+            PatientFormDefaultValues
 
 
     })
@@ -39,6 +46,8 @@ export function RegisterForm({ user }: { user: User }) {
 
     const onSubmit = async function (values: z.infer<typeof PatientFormValidation>) {
         setIsLoading(true)
+
+
         const formData = new FormData();
 
         if (values.identificationDocument && values.identificationDocument.length > 0) {
@@ -55,7 +64,7 @@ export function RegisterForm({ user }: { user: User }) {
         try {
             const patientData = {
                 ...values,
-                userId: user.$id,
+                userId: userId,
                 identificationDocument: formData,
 
 
@@ -63,7 +72,7 @@ export function RegisterForm({ user }: { user: User }) {
 
             const newPatient = await registerPatient(patientData)
             if (newPatient) {
-                router.push(`/patients/${user.$id}/appointment`)
+                router.push(`/patients/${userId}/new-appointment`)
 
             }
 
@@ -77,6 +86,9 @@ export function RegisterForm({ user }: { user: User }) {
         }
 
 
+
+
+
     }
 
 
@@ -88,15 +100,20 @@ export function RegisterForm({ user }: { user: User }) {
         <Form {...form}>
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+
                 <section className="mb-8 space-y-4">
                     <h1 className="text-4xl mb-1 font-semibold tracking-tight">Welcome👋 </h1>
+
                     <p className="text-gray-400  tracking-tighter">Welcome to Starlight Health</p>
+
                     <h1 className="text-3xl mb-2 mt-8 font-bold tracking-tight">Personal Information</h1>
                 </section>
 
 
 
                 {/* Full name */}
+
+
                 <CustomFormField
                     formFieldType={FormFieldName.INPUT}
                     control={form.control}
@@ -109,7 +126,9 @@ export function RegisterForm({ user }: { user: User }) {
                 />
 
 
+
                 {/* Phone and email */}
+
                 <div className="flex flex-col gap-4 md:flex-row xl:flex-row ">
                     <CustomFormField
                         formFieldType={FormFieldName.INPUT}
@@ -379,7 +398,10 @@ export function RegisterForm({ user }: { user: User }) {
                 />
 
                 {/* consent checkboxes */}
+
+
                 <h1 className="text-3xl space-y-4 mb-8 mt-8 font-bold tracking-tight">Consent and privacy</h1>
+
 
                 <div className="flex flex-col gap-4 ">
                     <CustomFormField
@@ -403,7 +425,10 @@ export function RegisterForm({ user }: { user: User }) {
 
 
 
-                <SubmitButton isLoading={isLoading} className="bg-green-600 w-full"  >Get Started</SubmitButton>
+
+                <SubmitButton isLoading={isLoading} className="bg-green-600 w-full">
+                    Get Started
+                </SubmitButton>
             </form>
         </Form >
     )
